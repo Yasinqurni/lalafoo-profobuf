@@ -16,7 +16,16 @@ message verifyAccessKeyRequest {
     string accessKey = 1;
 }
 
+message GetUserByIdsRequest {
+    repeated uint64 ids = 1;
+}
+
+message GetUserByIdsResponse {
+    repeated GetUserResponse users = 1;
+}
+
 service UserGrpcHandler {
   rpc GetUserById(GetUserRequest) returns (GetUserResponse);
   rpc VerifyAccessKey(verifyAccessKeyRequest) returns (GetUserResponse);
+  rpc GetUserByIds(GetUserByIdsRequest) returns (GetUserByIdsResponse);
 }

@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	UserGrpcHandler_GetUserById_FullMethodName     = "/UserGrpcHandler/GetUserById"
 	UserGrpcHandler_VerifyAccessKey_FullMethodName = "/UserGrpcHandler/VerifyAccessKey"
+	UserGrpcHandler_GetUserByIds_FullMethodName    = "/UserGrpcHandler/GetUserByIds"
 )
 
 // UserGrpcHandlerClient is the client API for UserGrpcHandler service.
@@ -29,6 +30,7 @@ const (
 type UserGrpcHandlerClient interface {
 	GetUserById(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	VerifyAccessKey(ctx context.Context, in *VerifyAccessKeyRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUserByIds(ctx context.Context, in *GetUserByIdsRequest, opts ...grpc.CallOption) (*GetUserByIdsResponse, error)
 }
 
 type userGrpcHandlerClient struct {
@@ -59,12 +61,23 @@ func (c *userGrpcHandlerClient) VerifyAccessKey(ctx context.Context, in *VerifyA
 	return out, nil
 }
 
+func (c *userGrpcHandlerClient) GetUserByIds(ctx context.Context, in *GetUserByIdsRequest, opts ...grpc.CallOption) (*GetUserByIdsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserByIdsResponse)
+	err := c.cc.Invoke(ctx, UserGrpcHandler_GetUserByIds_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserGrpcHandlerServer is the server API for UserGrpcHandler service.
 // All implementations must embed UnimplementedUserGrpcHandlerServer
 // for forward compatibility.
 type UserGrpcHandlerServer interface {
 	GetUserById(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	VerifyAccessKey(context.Context, *VerifyAccessKeyRequest) (*GetUserResponse, error)
+	GetUserByIds(context.Context, *GetUserByIdsRequest) (*GetUserByIdsResponse, error)
 	mustEmbedUnimplementedUserGrpcHandlerServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedUserGrpcHandlerServer) GetUserById(context.Context, *GetUserR
 }
 func (UnimplementedUserGrpcHandlerServer) VerifyAccessKey(context.Context, *VerifyAccessKeyRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyAccessKey not implemented")
+}
+func (UnimplementedUserGrpcHandlerServer) GetUserByIds(context.Context, *GetUserByIdsRequest) (*GetUserByIdsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByIds not implemented")
 }
 func (UnimplementedUserGrpcHandlerServer) mustEmbedUnimplementedUserGrpcHandlerServer() {}
 func (UnimplementedUserGrpcHandlerServer) testEmbeddedByValue()                         {}
@@ -138,6 +154,24 @@ func _UserGrpcHandler_VerifyAccessKey_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserGrpcHandler_GetUserByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByIdsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserGrpcHandlerServer).GetUserByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserGrpcHandler_GetUserByIds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserGrpcHandlerServer).GetUserByIds(ctx, req.(*GetUserByIdsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserGrpcHandler_ServiceDesc is the grpc.ServiceDesc for UserGrpcHandler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var UserGrpcHandler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyAccessKey",
 			Handler:    _UserGrpcHandler_VerifyAccessKey_Handler,
+		},
+		{
+			MethodName: "GetUserByIds",
+			Handler:    _UserGrpcHandler_GetUserByIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
