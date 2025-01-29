@@ -24,8 +24,20 @@ message GetUserByIdsResponse {
     repeated GetUserResponse users = 1;
 }
 
+message GetUserByNameRequest {
+    string username = 1;
+}
+
+message GetUserByNameResponse {
+    int32 id = 1;
+    string username = 2; 
+    string email = 3;
+    string phoneNumber = 4;
+}
+
 service UserGrpcHandler {
   rpc GetUserById(GetUserRequest) returns (GetUserResponse);
   rpc VerifyAccessKey(verifyAccessKeyRequest) returns (GetUserResponse);
   rpc GetUserByIds(GetUserByIdsRequest) returns (GetUserByIdsResponse);
+  rpc GetUserByName(GetUserByNameRequest) returns (GetUserByNameResponse);
 }
